@@ -49,7 +49,7 @@ def ui():
 
     q = 0
     while(q == 0):
-    # query user for input
+        # query user for input
         user_input = query(QUERY_HDL)
 
         # c ############################
