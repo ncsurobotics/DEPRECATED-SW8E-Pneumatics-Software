@@ -1,8 +1,8 @@
 import sys
-sys.path.insert(0, '../acoustics/Apps/pinger_finder/')
+sys.path.insert(0, '../acoustics/pinger_finder/')
 
-import boot  # python script for muxing pin configs
-import BBBIO
+import bbb
+from bbb import boot
 
 
 class State(object):
@@ -47,8 +47,7 @@ def ui():
     # Greet the user
     print("Welcome! Please enter a command below:")
 
-    q = 0
-    while(q == 0):
+    while True:
         # query user for input
         user_input = query(QUERY_HDL)
 
@@ -56,8 +55,8 @@ def ui():
         ########### user Class ##
         ################################
         if ('quit' == user_input) or ('q' == user_input):
-            q = 1
             PN.close()
+            break
 
         elif ('help' == user_input) or ('h' == user_input):
             print('-' * 50)
@@ -69,15 +68,18 @@ def ui():
         ################################
         elif ('fire' == user_input) or ('f' == user_input):
             print("Firing torpedo!")
-            PN.fireTorp()
+            PN.fire_torpedo()
 
         elif('grabber' == user_input) or ('g' == user_input):
+
             if PN.grabber_status == State.OPEN:
                 print("Closing Grabber")
-                PN.closeGrabber()
+                PN.close_grabber()
+
             elif PN.grabber_status == State.CLOSED:
                 print("Opening Grabber")
-                PN.openGrabber()
+                PN.open_grabber()
+
             else:
                 print("Hmm... grabber has no status.")
 
@@ -109,15 +111,15 @@ class Pneumatics:
 
     def __init__(self):
         # Instantiate pedo pin
-        self.pedo = BBBIO.Port(PEDO_PIN)
-        self.pedo.setPortDir("out")
+        self.pedo = bbb.Port(PEDO_PIN)
+        self.pedo.set_port_dir("out")
 
         # instantiate grabber pin
-        self.grabber = BBBIO.Port(GRABBER_PIN)
-        self.grabber.setPortDir("out")
+        self.grabber = bbb.Port(GRABBER_PIN)
+        self.grabber.set_port_dir("out")
         self.grabber_status = DEFAULT_GRABBER_STATE
 
-    def reinit(self):
+    def re_init(self):
         """
         """
         self.__init__()
@@ -148,29 +150,29 @@ class Pneumatics:
     def reset(self):
         """ Reset the config
         """
-        self.pedo.writeToPort(0)
-        self.grabber.writeToPort(0)
+        self.pedo.write_to_port(0)
+        self.grabber.write_to_port(0)
 
     ######################
     ## Torpedo Methods ##
     ######################
-    def fireTorp(self):
+    def fire_torpedo(self):
         """ Fire the torpedo
         """
-        self.pedo.writeToPort(1)
-        self.pedo.writeToPort(0)
+        self.pedo.write_to_port(1)
+        self.pedo.write_to_port(0)
 
     #####################
     ## Grabber methods ##
     #####################
-    def closeGrabber(self):
+    def close_grabber(self):
         """ Close the grabber
         """
-        self.grabber.writeToPort(1)
+        self.grabber.write_to_port(1)
         self.grabber_status = State.CLOSED
 
-    def openGrabber(self):
+    def open_grabber(self):
         """ Open the grabber
         """
-        self.grabber.writeToPort(0)
+        self.grabber.write_to_port(0)
         self.grabber_status = State.OPEN
