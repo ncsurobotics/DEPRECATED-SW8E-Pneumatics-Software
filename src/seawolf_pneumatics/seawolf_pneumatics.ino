@@ -2,13 +2,29 @@
 
 #define DEBUG //uncomment this line while testing w/ Arduino serial monitor
 
+
+////////////////////////////////////////////////////////////
+// you should wire it so that p6 relates to firing 6 etc etc 
+//6 = white
+//5 = green
+//4 = yeller
+//3 = blue
+// 2 = black
+// 1 = orange
+
+
+///////////////////////////////////////////////////////////
+
 //byte code definitions
-const byte OPEN_GRABBER   = 1;
-const byte CLOSE_GRABBER  = 2;
-const byte DROPPER_1      = 3;
-const byte DROPPER_2      = 4;
-const byte TORPEDO_1      = 5;
-const byte TORPEDO_2      = 6;
+
+const byte CLOSE_GRABBER  =1 ;
+const byte OPEN_GRABBER   =2 ;
+const byte TORPEDO_2      =3 ;
+const byte TORPEDO_1      =4 ;
+const byte DROPPER_2      =5 ;
+const byte DROPPER_1      =6 ;
+// if there is a problem with comparing it may be because of how the above variables are initialized.
+// consider making a counter to not let the things fire more than once 
 const byte EXTRA          = 7; //reserved for future use for something else
 
 //callback function declarations
@@ -20,12 +36,14 @@ void torpedo1();
 void torpedo2();
 
 //pins
-const int dropperPin1=A2;
-const int dropperPin2=A3;
-const int torpedoPin1=A4;
+const int grabberPin1=2;
+const int grabberPin2=3;
 const int torpedoPin2=A5;
-const int grabberPin1=A6;
-const int grabberPin2=A7;
+const int torpedoPin1=A4;
+const int dropperPin2=A3;
+const int dropperPin1=A2;
+
+
 
 void firePin(int pin, unsigned long ms)
 {
