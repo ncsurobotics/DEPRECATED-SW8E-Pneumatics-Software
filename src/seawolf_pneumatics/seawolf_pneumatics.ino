@@ -1,6 +1,6 @@
 //Seawolf Pneumatics
 
-#define DEBUG //uncomment this line while testing w/ Arduino serial monitor
+//#define DEBUG //uncomment this line while testing w/ Arduino serial monitor
 
 
 ////////////////////////////////////////////////////////////
@@ -23,6 +23,7 @@ const byte TORPEDO_2      =3 ;
 const byte TORPEDO_1      =4 ;
 const byte DROPPER_2      =5 ;
 const byte DROPPER_1      =6 ;
+const byte RESET          ='r';
 // if there is a problem with comparing it may be because of how the above variables are initialized.
 // consider making a counter to not let the things fire more than once 
 const byte EXTRA          = 7; //reserved for future use for something else
@@ -42,6 +43,7 @@ const int torpedoPin2=A5;
 const int torpedoPin1=A4;
 const int dropperPin2=A3;
 const int dropperPin1=A2;
+const int LED=13;
 
 
 
@@ -53,59 +55,48 @@ void firePin(int pin, unsigned long ms)
 }
 
 int handshakeSerial(){
+    //Show handshake LED
+    digitalWrite(LED, HIGH);
+    
     int incomingByte;
     int i = 0;
     char incomingString[64];
 
-    /* Wait for established message */
+    /* Wait for handshake signal */
     while(1){
-        incomingByte = Serial.read();
-        if(incomingByte == -1 || (incomingByte != '{' && i == 0)) {
-            Serial.println("{ID|Pneumatics}");
-            delay(250);
-            continue;
-        }
-
-        incomingString[i] = incomingByte;
-        incomingString[++i] = '\0';
-        if(incomingByte == '}') {
-            break;
-        }
+      //blocking
+      while(Serial.available()==0){}
+      
+      //Treat 0xFE as a signal for Identity
+      incomingByte = Serial.read();
+      if(incomingByte == 0xFE) {
+          Serial.println("{ID|Pneumatics}");
+          delay(250);
+          break;
+      }
     }
 
-    Serial.println(incomingString);
-
-    if(strcmp(incomingString, "{ESTABLISHED|NULL}") != 0) {
-        Serial.println("Invalid message from client!");
-        return 0;
-     }
-
-    /* Wait for READY message */
-    while(1) {
-        incomingByte = Serial.read();
-        if(incomingByte == -1) {
-            delay(100);
-        } else if(incomingByte == '}') {
-            break;
-        }
-    }
-
+    //turn off handshake LED
+    digitalWrite(LED, LOW);
+    
     return 1;
 }
 
 void setup() 
 {
   Serial.begin(9600);
-  #ifndef DEBUG
-    handshakeSerial();
-  #endif
-
+  
   pinMode(dropperPin1,OUTPUT);
   pinMode(dropperPin2,OUTPUT);
   pinMode(torpedoPin1,OUTPUT);
   pinMode(torpedoPin2,OUTPUT);
   pinMode(grabberPin1,OUTPUT);
   pinMode(grabberPin2,OUTPUT);
+  pinMode(LED,        OUTPUT);
+  
+  #ifndef DEBUG
+    handshakeSerial();
+  #endif
 }
 
 void loop() 
@@ -141,6 +132,8 @@ void loop()
       case TORPEDO_2:
         torpedo2();
         break;
+      case RESET:
+        setup();
       default:
         Serial.print("Unknown Code: ");
         Serial.println(code);
