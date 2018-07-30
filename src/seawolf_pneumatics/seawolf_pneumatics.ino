@@ -15,8 +15,7 @@
 
 ///////////////////////////////////////////////////////////
 
-//byte code definitions
-
+//byte code definitions, bytes corresponding numbered Pneumatics item, P1-P6
 const byte CLOSE_GRABBER  =1 ;
 const byte OPEN_GRABBER   =2 ;
 const byte TORPEDO_2      =3 ;
