@@ -37,12 +37,12 @@ void torpedo1();
 void torpedo2();
 
 //pins
-const int grabberPin1=2;
-const int grabberPin2=3;
-const int torpedoPin2=A5;
-const int torpedoPin1=A4;
-const int dropperPin2=A3;
-const int dropperPin1=A2;
+const int grabberPin1=3;
+const int grabberPin2=2;
+const int torpedoPin2=A2;
+const int torpedoPin1=A3;
+const int dropperPin2=A4;
+const int dropperPin1=A5;
 const int LED=13;
 
 
