@@ -1,6 +1,6 @@
 //Seawolf Pneumatics
 
-//#define DEBUG //uncomment this line while testing w/ Arduino serial monitor
+#define DEBUG //uncomment this line while testing w/ Arduino serial monitor
 
 
 ////////////////////////////////////////////////////////////
@@ -16,8 +16,8 @@
 ///////////////////////////////////////////////////////////
 
 //byte code definitions, bytes corresponding numbered Pneumatics item, P1-P6
-const byte CLOSE_GRABBER  =1 ;
-const byte OPEN_GRABBER   =2 ;
+const byte OPEN_GRABBER   =1 ;
+const byte CLOSE_GRABBER  =2 ;
 const byte TORPEDO_2      =3 ;
 const byte TORPEDO_1      =4 ;
 const byte DROPPER_2      =5 ;
@@ -36,12 +36,12 @@ void torpedo1();
 void torpedo2();
 
 //pins
-const int grabberPin1=3;
-const int grabberPin2=2;
-const int torpedoPin2=A2;
-const int torpedoPin1=A3;
-const int dropperPin2=A4;
-const int dropperPin1=A5;
+const int grabberPin1=8;
+const int grabberPin2=9;
+const int torpedoPin2=10;
+const int torpedoPin1=11;
+const int dropperPin2=12;
+const int dropperPin1=7;
 const int LED=13;
 
 
@@ -54,6 +54,7 @@ void firePin(int pin, unsigned long ms)
 }
 
 int handshakeSerial(){
+    Serial.println("Waiting for handshake");
     //Show handshake LED
     digitalWrite(LED, HIGH);
     
@@ -74,6 +75,7 @@ int handshakeSerial(){
           break;
       }
     }
+    Serial.println("Handshake ");
 
     //turn off handshake LED
     digitalWrite(LED, LOW);
@@ -93,9 +95,9 @@ void setup()
   pinMode(grabberPin2,OUTPUT);
   pinMode(LED,        OUTPUT);
   
-  #ifndef DEBUG
+  //#ifndef DEBUG
     handshakeSerial();
-  #endif
+  //#endif
 }
 
 void loop() 
@@ -148,7 +150,8 @@ void openGrabber()
   Serial.println("Open Grabber");
   #endif
   
-  firePin(grabberPin1, 1000);
+  //firePin(grabberPin1, 1000);
+  digitalWrite(grabberPin1, HIGH);
 }
 
 void closeGrabber()
@@ -157,8 +160,12 @@ void closeGrabber()
   Serial.println("Close Grabber");
   #endif
   
-  firePin(grabberPin2, 1000);
-
+  //firePin(grabberPin2, 1000);
+  digitalWrite(grabberPin1, LOW);
+  delay(100);
+  digitalWrite(grabberPin2, HIGH);
+  delay(1000);
+  digitalWrite(grabberPin2, LOW);
 }
 
 void dropper1()
@@ -192,4 +199,3 @@ void torpedo2()
   #endif
   firePin(torpedoPin2, 1000);
 }
-
